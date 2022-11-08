@@ -1,0 +1,6 @@
+bearing	.98
+wheel	98
+tire	30
+hose	1.97
+oil	7.99
+grease	6.57
