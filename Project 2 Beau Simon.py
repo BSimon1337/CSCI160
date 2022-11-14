@@ -7,125 +7,114 @@ Online Student - 0869416
 import os
 import FileUtils
 
-volunteerList = []
-
 def readInfo (fileName):
-    fileName = FileUtils.selectOpenFile("Select file to open") #asking the user to open the file they want read
-    if fileName == None: #user pressed cancel
-        exit()    
-        
+    volunteerList = []
     volunteerFile = open (fileName, "r") #adding the values to a list using a loop
     for volunteer in volunteerFile:
         volunteer = volunteer.strip() 
-        volunteerList.append (volunteer) #getting a list of int and not string
+        volunteerList.append (volunteer) 
              
-    #print (numberList) #used to test the output of my for loop
+    
     return(volunteerList)       
          
-'''
-creates and fills a list with the names of the volunteers for a
-month. Each line in the file will be as described. The function returns the list containing the
-volunteer information.
-'''
-
-#def saveInfo (fileName, calendar):
-    
-
-'''    
-writes out calendar (day and volunteer) to the
-specified file in the described format. This function does not return anything.
-'''
 
 def createCalendar (numOfDays):
-    calendarList = []
-    for i in range(1, numOfDays):
-        calendarList.append(i)
+    calendarList = [None]*numOfDays
         
     return calendarList
 
-'''    
-creates and returns an empty calendar with specified
-number of days.
-'''
+
+def saveInfo (fileName, calendar):
+    outFile = open (fileName, "w")
+    for i in range(len(calendar)):
+        volunteer = ""
+        if calendar[i] != None:
+            volunteer = (" " + calendar[i])
+        outFile.write (str(i+1)+ volunteer+ "\n")
+    outFile.close()
+
+def isDayAvailable (calendar, date):
+    if calendar[date-1] == None:
+        return True
+    else:
+        return False
 
 
-#def isDayAvailable (calendar, date):
+def daysVolunteer (calendar, date):
+    return calendar[date-1]
+
+
+
+def setVolunteer (calendar, date, name): 
+    if isDayAvailable(calendar, date):
+        calendar[date-1] = name
+        return True
+    else:
+        return False
     
-'''
-returns True if date is available, or does not
-currently have a volunteer. Otherwise the function returns False.
-'''
 
 
-#def daysVolunteer (calendar, date):
-    
-    
-'''
-returns the volunteer, if date has one, otherwise
-returns None.
-'''
-
-
-#def setVolunteer (calendar, date, name): 
-
-'''
-if date is available (no current volunteer)
-name is assigned to the specified date and True is returned. If date already has an assigned
-volunteer do nothing to the calendar and return False.
-'''
-
-
-#def removeVolunteer (calendar, date):
-    
-'''
-removes the volunteer from date, if there was a
-volunteer for that date. If there wasn’t a volunteer assigned to that date no action is taken. This
-function does not return anything.
-'''
-
-
-#def numOfDaysVolunteering (calendar, name):
-    
-    
-'''
-returns the number of days that name is
-signed up to volunteer in the month.
-'''
-
-
-
-#def daysVolunteering (calendar, name):
-
-'''
-creates and returns a list containing the days
-that name is signed up to volunteer in the month. This will return a list even if name is not signed
-up for any day in that month.
-
-'''
+def removeVolunteer (calendar, date):
+    if isDayAvailable(calendar, date) == False:
+        calendar[date] = None
         
-#def daysStillAvailable (calendar):
 
-'''
-returns the number of days in the month that do not
-have a volunteer.  
 
-'''
+def numOfDaysVolunteering (calendar, name):
+    totalDays = 0
+    for volunteer in calendar:
+        if volunteer == name:
+            totalDays += 1
+    return totalDays
 
-#def printMonth (calendar):
 
-'''    
-this function DOES create output on the display. Print out
-each day of the month and its volunteer. Ensure that the days are right justified and that the
-volunteer’s names are left justified. Print an appropriate label above each column. Do not print
-anything for the name if there is no volunteer for that date. Do not return anything from the
-function.
-'''
+
+def daysVolunteering (calendar, name):
+    volunteerDates = []
+    for i in range(len(calendar)):
+        if calendar[i] == name:
+            volunteerDates.append(i+1)
+            
+    return volunteerDates
+
+        
+def daysStillAvailable (calendar):
+    openDays = 0
+    for volunteer in calendar:
+        if volunteer == None:
+            openDays += 1
+    return openDays    
+
+
+def printMonth (calendar):
+    formatStr = "{:>4} {}"   
+    print (formatStr.format("Date", "Volunteer"))
+    
+    for i in range(len(calendar)):
+        volunteer = ""
+        if calendar[i] != None:
+            volunteer = calendar[i]
+            
+        print(formatStr.format(i+1, volunteer))
+
+
 
 
 def main():
     
-    readInfo()
+    volunteers = readInfo("volunteers.txt")
+    #print(volunteers)
+    
+    calendar = createCalendar(31)
+    #print(calendar)
+    
+    setVolunteer(calendar, 12, volunteers[3])
+    setVolunteer(calendar, 12, volunteers[2])
+    
+    printMonth(calendar)
+    saveInfo("calendar.txt", calendar)
 
+    
     
     
 main()
